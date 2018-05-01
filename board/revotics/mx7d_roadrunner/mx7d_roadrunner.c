@@ -522,10 +522,33 @@ int board_early_init_f(void)
 	return 0;
 }
 
+#define GPIO_PWR_GREEN_LED	IMX_GPIO_NR(2, 29)
+#define GPIO_PWR_RED_LED	IMX_GPIO_NR(2, 28)
+
+#define GPIO_STATUS_BLUE_LED	IMX_GPIO_NR(3, 20)
+#define GPIO_STATUS_RED_LED	IMX_GPIO_NR(3, 11)
+
+#define GPIO_LINK_BLUE_LED	IMX_GPIO_NR(3, 14)
+#define GPIO_LINK_RED_LED	IMX_GPIO_NR(3, 10)
+
+iomux_v3_cfg_t const gpio_led_pads[] = {
+	(MX7D_PAD_EPDC_BDR0__GPIO2_IO28 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+	(MX7D_PAD_EPDC_BDR1__GPIO2_IO29 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+};
+
+
 int board_init(void)
 {
 	/* Address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
+
+	/* Configure status leds */
+	imx_iomux_v3_setup_multiple_pads(
+		usdhc1_pads, ARRAY_SIZE(gpio_led_pads));
+	gpio_request(GPIO_PWR_GREEN_LED, "pwr_green_led");
+	gpio_request(GPIO_PWR_RED_LED, "pwr_red_led");
+	gpio_direction_output(GPIO_PWR_GREEN_LED, 1);
+	gpio_direction_output(GPIO_PWR_RED_LED, 1);
 
 #ifdef CONFIG_FEC_MXC
 	setup_fec(CONFIG_FEC_ENET_DEV);
