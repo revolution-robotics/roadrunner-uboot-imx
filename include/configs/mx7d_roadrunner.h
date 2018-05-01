@@ -1,8 +1,9 @@
 /*
  * Copyright (C) 2015-2016 Freescale Semiconductor, Inc.
  * Copyright (C) 2016-2018 Variscite Ltd.
+ * Copyright (C) 2018 Revolution Robotics, Inc.
  *
- * Author: Eran Matityahu <eran.m@variscite.com>
+ * Author: Jacob Postman <jacob@revotics.com>
  *
  * Configuration settings for the Variscite i.MX7D VAR-SOM-MX7 board family.
  *
@@ -213,13 +214,6 @@
 	"initrd_high=0xffffffff\0" \
 	"fdt_file=undefined\0" \
 	"fdt_addr=0x83000000\0" \
-	"panel=VAR-WVGA-LCD\0" \
-	"splashsourceauto=yes\0" \
-	"splashfile=/boot/splash.bmp\0" \
-	"splashimage=0x83100000\0" \
-	"splashenable=setenv splashfile /boot/splash.bmp; " \
-		"setenv splashimage 0x83100000\0" \
-	"splashdisable=setenv splashfile; setenv splashimage\0" \
 	"ip_dyn=yes\0" \
 	"use_m4=no\0" \
 	"m4bootdata="__stringify(CONFIG_SYS_AUXCORE_BOOTDATA)"\0" \
@@ -255,16 +249,9 @@
 		"if test $fdt_file = undefined; then " \
 			"if test $som_rev = EMMC; then " \
 				"if test ${use_m4} = yes; then " \
-					"setenv fdt_file imx7d-var-som-emmc-m4.dtb; " \
+					"setenv fdt_file imx7d-roadrunner-m4.dtb; " \
 				"else " \
-					"setenv fdt_file imx7d-var-som-emmc.dtb; " \
-				"fi; " \
-			"fi; " \
-			"if test $som_rev = NAND; then " \
-				"if test ${use_m4} = yes; then " \
-					"setenv fdt_file imx7d-var-som-nand-m4.dtb; " \
-				"else " \
-					"setenv fdt_file imx7d-var-som-nand.dtb; " \
+					"setenv fdt_file imx7d-roadrunner.dtb; " \
 				"fi; " \
 			"fi; " \
 			"if test $fdt_file = undefined; then " \

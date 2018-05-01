@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Variscite Ltd.
+ * Copyright (C) 2018 Revolution Robotics, Inc.
  *
  * SPDX-License-Identifier: GPL-2.0+
  */

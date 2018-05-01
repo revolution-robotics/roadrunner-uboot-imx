@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Freescale Semiconductor, Inc.
  * Copyright (C) 2016-2017 Variscite Ltd.
+ * Copyright (C) 2018 Revolution Robotics, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -12,7 +13,7 @@
 #include "imx7d-roadrunner.dtsi"
 
 / {
-	model = "Variscite i.MX7 DUAL Smart Device Board";
+	model = "Revotics i.MX7D Industrial Gateway";
 	compatible = "fsl,imx7d-var-som", "fsl,imx7d";
 };
 
