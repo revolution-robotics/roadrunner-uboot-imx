@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Freescale Semiconductor, Inc.
  * Copyright (C) 2016-2017 Variscite Ltd.
+ * Copyright (C) 2018 Revolution Robotics, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -10,6 +11,16 @@
 #include "imx7d.dtsi"
 
 / {
+	cpus {
+		cpu0: cpu@0 {
+			operating-points = <
+				/* KHz	uV */
+				996000	1075000
+				792000	975000
+			>;
+		};
+	};
+
 	memory {
 		reg = <0x80000000 0x80000000>;
 	};
@@ -32,9 +43,8 @@
 		simple-audio-card,name = "wm8731audio";
 		simple-audio-card,widgets =
 			"Headphone", "Headphone Jack",
-			"Line", "Line Out",
-			"Microphone", "Mic Jack",
-			"Line", "Line In";
+			"Line", "Line Jack",
+			"Microphone", "Mic Jack";
 		simple-audio-card,routing =
 			"Headphone Jack", "RHPOUT",
 			"Headphone Jack", "LHPOUT",
@@ -69,22 +79,39 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_gpio_keys>;
 
-		menu {
-			label = "Menu";
-			gpios = <&gpio2 28 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_MENU>;
+		btn0 {
+			label = "BTN0";
+			gpios = <&gpio3 19 GPIO_ACTIVE_LOW>;
+			linux,code = <BTN_0>;
+      wakeup-source;
 		};
+	};
+	leds {
+		compatible = "gpio-leds";
 
-		home {
-			label = "Home";
-			gpios = <&gpio2 29 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_HOME>;
+		pwr-red-led {
+			gpios = <&gpio2 28 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
 		};
-
-		back {
-			label = "Back";
-			gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_BACK>;
+		pwr-green-led {
+			gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+		stat-blue-led {
+			gpios = <&gpio3 20 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+		stat-red-led {
+			gpios = <&gpio3 11 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+		link-blue-led {
+			gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+		link-red-led {
+			gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
 		};
 	};
 
@@ -109,7 +136,7 @@
 			regulator-name = "usb_otg2_vbus";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+			gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>; // USB HUB RESET
 			enable-active-high;
 		};
 
@@ -147,24 +174,6 @@
 			regulator-always-on;
 			status = "okay";
 		};
-
-		reg_hsic_hub_pwr_on: reg_hsic_hub_pwr_on {
-			compatible = "regulator-fixed";
-			regulator-name = "hsic_hub_pwr_on";
-			gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-always-on;
-			status = "okay";
-		};
-
-		reg_hsic_hub_connect: reg_hsic_hub_connect {
-			compatible = "regulator-fixed";
-			regulator-name = "reg_hsic_hub_connect";
-			gpio = <&gpio1 12 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-always-on;
-			status = "okay";
-		};
 	};
 };
 
@@ -185,17 +194,6 @@
 &clks {
 	assigned-clocks = <&clks IMX7D_PLL_AUDIO_POST_DIV>;
 	assigned-clock-rates = <884736000>;
-};
-
-&csi1 {
-	csi-mux-mipi = <&gpr 0x14 4>;
-	status = "okay";
-
-	port {
-		csi_ep: endpoint {
-			remote-endpoint = <&csi_mipi_ep>;
-		};
-	};
 };
 
 &epxp {
@@ -289,25 +287,7 @@
 	phy-handle = <&ethphy1>;
 	phy-reset-gpios = <&gpio4 3 GPIO_ACTIVE_LOW>;
 	fsl,magic-packet;
-	status = "disable";
-};
-
-&mipi_csi {
-	clock-frequency = <240000000>;
 	status = "okay";
-	port {
-		mipi_sensor_ep: endpoint1 {
-			remote-endpoint = <&ov5640_mipi_ep>;
-			data-lanes = <2>;
-			csis-hs-settle = <13>;
-			csis-clk-settle = <2>;
-			csis-wclk;
-		};
-
-		csi_mipi_ep: endpoint2 {
-			remote-endpoint = <&csi_ep>;
-		};
-	};
 };
 
 &flexcan2 {
@@ -324,6 +304,23 @@
 	scl-gpios = <&gpio4 8 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&gpio4 9 GPIO_ACTIVE_HIGH>;
 	status = "okay";
+
+	ina219_5V: ina219@40 {
+		compatible = "ti,ina219";
+		reg = <0x40>;
+		shunt-resistor = <10000>;
+	};
+
+	ina219_12V: ina219@41 {
+		compatible = "ti,ina219";
+		reg = <0x41>;
+		shunt-resistor = <2000>;
+	};
+
+	sensor1: lm75@48 {
+		compatible = "lm75";
+		reg = <0x48>;
+	};
 
 	pmic: pfuze3000@08 {
 		compatible = "fsl,pfuze3000";
@@ -437,28 +434,10 @@
 		status = "okay";
 	};
 
-	/* DS1307 RTC module */
-	rtc@0x68 {
-		compatible = "dallas,ds1307";
-		reg = <0x68>;
-	};
-
-	ov5640_mipi: ov5640_mipi@3c {
-		compatible = "ovti,ov5640_mipi";
-		reg = <0x3c>;
-		clocks = <&clks IMX7D_CLK_DUMMY>;
-		clock-names = "csi_mclk";
-		csi_id = <0>;
-		pwn-gpios = <&gpio4 9 1>;
-		rst-gpios = <&gpio4 10 0>;
-		AVDD-supply = <&vgen6_reg>;
-		mclk = <24000000>;
-		mclk_source = <0>;
-		port {
-			ov5640_mipi_ep: endpoint {
-				remote-endpoint = <&mipi_sensor_ep>;
-			};
-		};
+	pcf2129t: pcf2127@51 {
+		compatible = "nxp,pcf2127";
+		reg = <0x51>;
+		status = "okay";
 	};
 };
 
@@ -498,30 +477,21 @@
 				MX7D_PAD_EPDC_PWR_COM__GPIO2_IO30	0x80000000  /* capacitive touch irq */
 				MX7D_PAD_SD2_RESET_B__GPIO5_IO11	0x59  /* ethphy0 reset */
 				MX7D_PAD_UART2_TX_DATA__GPIO4_IO3	0x59  /* ethphy1 reset */
-				MX7D_PAD_GPIO1_IO10__GPIO1_IO10		0x59  /* hsic hub reset */
-				MX7D_PAD_GPIO1_IO12__GPIO1_IO12		0x59  /* hsic hub connect */
-				MX7D_PAD_GPIO1_IO13__GPIO1_IO13		0x59  /* LED */
-				MX7D_PAD_SD1_WP__CCM_CLKO2		0xb0  /* camera clock */
+				MX7D_PAD_GPIO1_IO10__GPIO1_IO10		0x59  /* usb hub reset */
+				MX7D_PAD_GPIO1_IO12__GPIO1_IO12		0x59  /* touch reset */
+				MX7D_PAD_SAI2_TX_SYNC__GPIO6_IO19	0x59  /* temp alert */
 			>;
 		};
 
 		pinctrl_gpio_keys: gpio_keysgrp {
 			fsl,pins = <
-				MX7D_PAD_EPDC_BDR0__GPIO2_IO28		0x32
-				MX7D_PAD_EPDC_BDR1__GPIO2_IO29		0x32
-				MX7D_PAD_GPIO1_IO11__GPIO1_IO11		0x32
+				MX7D_PAD_LCD_DATA14__GPIO3_IO19		0x32
 			>;
 		};
 
 		pinctrl_pcie: pciegrp {
 			fsl,pins = <
 				MX7D_PAD_EPDC_PWR_STAT__GPIO2_IO31	0x79 /* pcie reset */
-			>;
-		};
-
-		pinctrl_mipi_dsi_reset: mipi_dsi_reset_grp {
-			fsl,pins = <
-				MX7D_PAD_SAI1_TX_DATA__GPIO6_IO15	0x1b
 			>;
 		};
 
@@ -863,27 +833,6 @@
 	status = "okay";
 };
 
-&sai1 {
-	#sound-dai-cells = <1>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_sai1 &pinctrl_sai1_mclk>;
-	assigned-clocks = <&clks IMX7D_SAI1_ROOT_SRC>,
-			  <&clks IMX7D_SAI1_ROOT_CLK>;
-	assigned-clock-parents = <&clks IMX7D_PLL_AUDIO_POST_DIV>;
-	assigned-clock-rates = <0>, <36864000>;
-	status = "okay";
-};
-
-&sai2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_sai2>;
-	assigned-clocks = <&clks IMX7D_SAI2_ROOT_SRC>,
-			  <&clks IMX7D_SAI2_ROOT_CLK>;
-	assigned-clock-parents = <&clks IMX7D_PLL_AUDIO_POST_DIV>;
-	assigned-clock-rates = <0>, <36864000>;
-	status = "okay";
-};
-
 &sdma {
 	status = "okay";
 };
@@ -931,7 +880,7 @@
 
 		pinctrl_wlan: wlangrp {
 			fsl,pins = <
-				MX7D_PAD_GPIO1_IO04__GPIO1_IO4		0x59 /* WL_REG_ON */
+				MX7D_PAD_GPIO1_IO04__GPIO1_IO4		0x09 /* WL_REG_ON */
 				MX7D_PAD_GPIO1_IO03__OSC32K_32K_OUT	0xb0 /* WIFI Slow clock */
 			>;
 		};
@@ -973,7 +922,6 @@
 
 &usbh {
 	status = "disabled";
-	vbus-supply = <&reg_hsic_hub_pwr_on>;
 };
 
 &usbotg1 {
@@ -1028,3 +976,4 @@
 &snvs_rtc {
 	status = "disabled";
 };
+

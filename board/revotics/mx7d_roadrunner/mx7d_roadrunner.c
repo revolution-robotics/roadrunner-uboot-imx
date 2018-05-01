@@ -1,8 +1,9 @@
 /*
  * Copyright (C) 2015-2016 Freescale Semiconductor, Inc.
  * Copyright (C) 2016-2018 Variscite Ltd.
+ * Copyright (C) 2018 Revolution Robotics, Inc.
  *
- * Author: Eran Matityahu <eran.m@variscite.com>
+ * Author: Jacob Postman <jacob@revotics.com>
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
@@ -70,10 +71,6 @@ DECLARE_GLOBAL_DATA_PTR;
 	PAD_CTL_DSE_3P3V_98OHM)
 
 #define BUTTON_PAD_CTRL    (PAD_CTL_PUS_PU5KOHM | PAD_CTL_DSE_3P3V_98OHM)
-
-#define NAND_PAD_CTRL (PAD_CTL_DSE_3P3V_49OHM | PAD_CTL_SRE_SLOW | PAD_CTL_HYS)
-
-#define NAND_PAD_READY0_CTRL (PAD_CTL_DSE_3P3V_49OHM | PAD_CTL_PUS_PU5KOHM)
 
 int board_mmc_get_env_dev(int devno)
 {
@@ -188,164 +185,6 @@ static iomux_v3_cfg_t const uart1_pads[] = {
 	MX7D_PAD_UART1_TX_DATA__UART1_DCE_TX | MUX_PAD_CTRL(UART_PAD_CTRL),
 	MX7D_PAD_UART1_RX_DATA__UART1_DCE_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
-
-#ifdef CONFIG_NAND_MXS
-static iomux_v3_cfg_t const gpmi_pads[] = {
-	MX7D_PAD_SD3_DATA0__NAND_DATA00 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA1__NAND_DATA01 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA2__NAND_DATA02 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA3__NAND_DATA03 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA4__NAND_DATA04 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA5__NAND_DATA05 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA6__NAND_DATA06 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_DATA7__NAND_DATA07 | MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_CLK__NAND_CLE	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_CMD__NAND_ALE	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_STROBE__NAND_RE_B	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SD3_RESET_B__NAND_WE_B	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SAI1_MCLK__NAND_WP_B	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SAI1_RX_DATA__NAND_CE1_B	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SAI1_TX_BCLK__NAND_CE0_B	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SAI1_TX_SYNC__NAND_DQS	| MUX_PAD_CTRL(NAND_PAD_CTRL),
-	MX7D_PAD_SAI1_TX_DATA__NAND_READY_B	| MUX_PAD_CTRL(NAND_PAD_READY0_CTRL),
-};
-
-static void setup_gpmi_nand(void)
-{
-	imx_iomux_v3_setup_multiple_pads(gpmi_pads, ARRAY_SIZE(gpmi_pads));
-
-	/* NAND_USDHC_BUS_CLK is set in rom */
-
-	set_clk_nand();
-}
-#endif
-
-#ifdef CONFIG_VIDEO_MXS
-static iomux_v3_cfg_t const lcd_pads[] = {
-	MX7D_PAD_EPDC_DATA00__LCD_CLK | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA01__LCD_ENABLE | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA03__LCD_HSYNC | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA02__LCD_VSYNC | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA02__LCD_DATA2 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA03__LCD_DATA3 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA04__LCD_DATA4 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA05__LCD_DATA5 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA06__LCD_DATA6 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA07__LCD_DATA7 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA10__LCD_DATA10 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA11__LCD_DATA11 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA12__LCD_DATA12 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA13__LCD_DATA13 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA14__LCD_DATA14 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_EPDC_DATA15__LCD_DATA15 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA18__LCD_DATA18 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA19__LCD_DATA19 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA20__LCD_DATA20 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA21__LCD_DATA21 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA22__LCD_DATA22 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-	MX7D_PAD_LCD_DATA23__LCD_DATA23 | MUX_PAD_CTRL(LCD_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const pwm_pads[] = {
-	/* Use GPIO for Brightness adjustment, duty cycle = period */
-	MX7D_PAD_GPIO1_IO02__GPIO1_IO2 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-void do_enable_parallel_lcd(struct display_info_t const *dev)
-{
-	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
-
-	imx_iomux_v3_setup_multiple_pads(pwm_pads, ARRAY_SIZE(pwm_pads));
-
-	/* Set Brightness to high */
-	gpio_request(IMX_GPIO_NR(1, 2), "lcd_backlight");
-	gpio_direction_output(IMX_GPIO_NR(1, 2) , 1);
-}
-
-#define MHZ2PS(f)	(1000000/(f))
-
-struct display_info_t const displays[] = {{
-	.bus = ELCDIF1_IPS_BASE_ADDR,
-	.addr = 0,
-	.pixfmt = 24,
-	.detect = NULL,
-	.enable = do_enable_parallel_lcd,
-	.mode = {
-		.name		= "VAR-WVGA-LCD",
-		.xres		= 800,
-		.yres		= 480,
-		.pixclock	= MHZ2PS(30),
-		.left_margin	= 40,
-		.right_margin	= 40,
-		.upper_margin	= 29,
-		.lower_margin	= 13,
-		.hsync_len	= 48,
-		.vsync_len	= 3,
-		.sync		= FB_SYNC_CLK_LAT_FALL,
-		.vmode		= FB_VMODE_NONINTERLACED
-	}
-}};
-size_t display_count = ARRAY_SIZE(displays);
-#endif /* CONFIG_VIDEO_MXS */
-
-#ifdef CONFIG_SPLASH_SCREEN
-static void set_splashsource_to_boot_rootfs(void)
-{
-	if (!check_env("splashsourceauto", "yes"))
-		return;
-
-#ifdef CONFIG_NAND_BOOT
-	setenv("splashsource", "nand");
-#else
-	if (mmc_get_env_dev() == 0)
-		setenv("splashsource", "sd");
-	else if (mmc_get_env_dev() == 1)
-		setenv("splashsource", "emmc");
-#endif
-}
-
-int splash_screen_prepare(void)
-{
-	int ret=0;
-	char sd_devpart_str[5];
-	char emmc_devpart_str[5];
-	u32 sd_part, emmc_part;
-
-	sd_part = emmc_part = getenv_ulong("mmcrootpart", 10, 0);
-
-	sprintf(sd_devpart_str, "0:%d", sd_part);
-	sprintf(emmc_devpart_str, "1:%d", emmc_part);
-
-	struct splash_location var_splash_locations[] = {
-		{
-			.name = "sd",
-			.storage = SPLASH_STORAGE_MMC,
-			.flags = SPLASH_STORAGE_FS,
-			.devpart = sd_devpart_str,
-		},
-		{
-			.name = "emmc",
-			.storage = SPLASH_STORAGE_MMC,
-			.flags = SPLASH_STORAGE_FS,
-			.devpart = emmc_devpart_str,
-		},
-		{
-			.name = "nand",
-			.storage = SPLASH_STORAGE_NAND,
-			.flags = SPLASH_STORAGE_FS,
-			.mtdpart = "rootfs",
-			.ubivol = "ubi0:rootfs",
-		},
-	};
-
-	set_splashsource_to_boot_rootfs();
-
-	ret = splash_source_load(var_splash_locations,
-			ARRAY_SIZE(var_splash_locations));
-
-	return ret;
-}
-#endif /* CONFIG_SPLASH_SCREEN */
 
 static void setup_iomux_uart(void)
 {
@@ -799,7 +638,7 @@ int board_late_init(void)
 
 int checkboard(void)
 {
-	puts("Board: Variscite VAR-SOM-MX7\n");
+	puts("Board: Revotics i.MX7D Industrial Edge Gateway\n");
 
 	return 0;
 }
@@ -870,7 +709,7 @@ void board_fastboot_setup(void)
 #ifdef CONFIG_ANDROID_RECOVERY
 
 /* Use back key for recovery key */
-#define GPIO_BACK_KEY IMX_GPIO_NR(1, 11)
+#define GPIO_BUTTON IMX_GPIO_NR(3, 19)
 iomux_v3_cfg_t const recovery_key_pads[] = {
 	(MX7D_PAD_GPIO1_IO11__GPIO1_IO11 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
@@ -883,10 +722,10 @@ int is_recovery_key_pressing(void)
 	imx_iomux_v3_setup_multiple_pads(recovery_key_pads,
 			ARRAY_SIZE(recovery_key_pads));
 
-	gpio_request(GPIO_BACK_KEY, "back_key");
-	gpio_direction_input(GPIO_BACK_KEY);
+	gpio_request(GPIO_BUTTON, "user_button");
+	gpio_direction_input(GPIO_BUTTON);
 
-	if (gpio_get_value(GPIO_BACK_KEY) == 0) { /* BACK key is low assert */
+	if (gpio_get_value(GPIO_BUTTON) == 0) { /* User button is low assert */
 		button_pressed = 1;
 		printf("Recovery key pressed\n");
 	}
