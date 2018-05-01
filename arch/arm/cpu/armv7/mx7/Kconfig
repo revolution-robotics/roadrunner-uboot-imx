@@ -16,6 +16,14 @@ choice
 	prompt "MX7 board select"
 	optional
 
+config TARGET_MX7D_ROADRUNNER
+	bool "mx7d_roadrunner"
+	select BOARD_LATE_INIT
+	select MX7D
+	select DM
+	select DM_THERMAL
+	select SUPPORT_SPL
+
 config TARGET_MX7DSABRESD
 	bool "mx7dsabresd"
 	select BOARD_LATE_INIT
@@ -97,6 +105,7 @@ source "board/freescale/mx7d_12x12_ddr3_arm2/Kconfig"
 source "board/freescale/mx7d_19x19_ddr3_arm2/Kconfig"
 source "board/freescale/mx7d_19x19_lpddr3_arm2/Kconfig"
 source "board/freescale/pico-imx7d/Kconfig"
+source "board/revotics/mx7d_roadrunner/Kconfig"
 source "board/toradex/colibri_imx7/Kconfig"
 source "board/variscite/mx7dvar_som/Kconfig"
 source "board/warp7/Kconfig"
