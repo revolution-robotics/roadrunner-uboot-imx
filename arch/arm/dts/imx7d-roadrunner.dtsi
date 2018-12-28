@@ -64,7 +64,6 @@
 
 		sound_master: simple-audio-card,cpu {
 			sound-dai = <&sai1 0>;
-			system-clock-direction-out;
 		};
 
 		simple-audio-card,codec {
@@ -163,9 +162,6 @@
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			regulator-name = "wlreg_on";
-			gpio = <&gpio1 4 GPIO_ACTIVE_HIGH>;	/* WL_REG_ON: PAD_GPIO1_IO04__GPIO1_IO4*/
-			startup-delay-us = <100>;
-			enable-active-high;
 		};
 
 		reg_touch_3v3: reg_touch_3v3 {
@@ -249,11 +245,16 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enet1>;
 	phy-supply=<&vgen3_reg>;
-	assigned-clocks = <&clks IMX7D_ENET1_TIME_ROOT_SRC>,
-			  <&clks IMX7D_ENET1_TIME_ROOT_CLK>;
-	assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
-	assigned-clock-rates = <0>, <100000000>;
-	phy-mode = "rgmii-txid";
+	assigned-clocks = <&clks IMX7D_ENET_PHY_REF_ROOT_SRC>,
+			  <&clks IMX7D_ENET_AXI_ROOT_SRC>,
+			  <&clks IMX7D_ENET1_TIME_ROOT_SRC>,
+			  <&clks IMX7D_ENET1_TIME_ROOT_CLK>,
+			  <&clks IMX7D_ENET_AXI_ROOT_CLK>;
+	assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_25M_CLK>,
+				 <&clks IMX7D_PLL_ENET_MAIN_250M_CLK>,
+				 <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
+	assigned-clock-rates = <0>, <0>, <0>, <100000000>, <250000000>;
+	phy-mode = "rgmii-id";
 	phy-handle = <&ethphy0>;
 	phy-reset-gpios = <&gpio5 11 GPIO_ACTIVE_LOW>;
 	fsl,magic-packet;
@@ -279,11 +280,16 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enet2>;
 	phy-supply=<&vgen3_reg>;
-	assigned-clocks = <&clks IMX7D_ENET2_TIME_ROOT_SRC>,
-			  <&clks IMX7D_ENET2_TIME_ROOT_CLK>;
-	assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
-	assigned-clock-rates = <0>, <100000000>;
-	phy-mode = "rgmii";
+	assigned-clocks = <&clks IMX7D_ENET_PHY_REF_ROOT_SRC>,
+			  <&clks IMX7D_ENET_AXI_ROOT_SRC>,
+			  <&clks IMX7D_ENET2_TIME_ROOT_SRC>,
+			  <&clks IMX7D_ENET2_TIME_ROOT_CLK>,
+			  <&clks IMX7D_ENET_AXI_ROOT_CLK>;
+	assigned-clock-parents = <&clks IMX7D_PLL_ENET_MAIN_25M_CLK>,
+				 <&clks IMX7D_PLL_ENET_MAIN_250M_CLK>,
+				 <&clks IMX7D_PLL_ENET_MAIN_100M_CLK>;
+	assigned-clock-rates = <0>, <0>, <0>, <100000000>, <250000000>;
+	phy-mode = "rgmii-id";
 	phy-handle = <&ethphy1>;
 	phy-reset-gpios = <&gpio4 3 GPIO_ACTIVE_LOW>;
 	fsl,magic-packet;
@@ -298,11 +304,8 @@
 
 &i2c1 {
 	clock-frequency = <100000>;
-	pinctrl-names = "default", "gpio";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c1>;
-	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-	scl-gpios = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio4 9 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 
 	ina219_5V: ina219@40 {
@@ -418,11 +421,8 @@
 
 &i2c2 {
 	clock-frequency = <100000>;
-	pinctrl-names = "default", "gpio";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c2>;
-	pinctrl-1 = <&pinctrl_i2c2_gpio>;
-	scl-gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio4 11 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 
 	wm8731: wm8731@1a {
@@ -443,11 +443,8 @@
 
 &i2c4 {
 	clock-frequency = <100000>;
-	pinctrl-names = "default", "gpio";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c4>;
-	pinctrl-1 = <&pinctrl_i2c4_gpio>;
-	scl-gpios = <&gpio4 14 GPIO_ACTIVE_HIGH>;
-	sda-gpios = <&gpio4 15 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 
 	ft5x06_ts@38 {
@@ -572,24 +569,10 @@
 			>;
 		};
 
-		pinctrl_i2c1_gpio: i2c1grp_gpio {
-			fsl,pins = <
-				MX7D_PAD_I2C1_SDA__GPIO4_IO9	0x7f
-				MX7D_PAD_I2C1_SCL__GPIO4_IO8	0x7f
-			>;
-		};
-
 		pinctrl_i2c2: i2c2grp {
 			fsl,pins = <
 				MX7D_PAD_I2C2_SDA__I2C2_SDA	0x4000007f
 				MX7D_PAD_I2C2_SCL__I2C2_SCL	0x4000007f
-			>;
-		};
-
-		pinctrl_i2c2_gpio: i2c2grp_gpio {
-			fsl,pins = <
-				MX7D_PAD_I2C2_SDA__GPIO4_IO11	0x7f
-				MX7D_PAD_I2C2_SCL__GPIO4_IO10	0x7f
 			>;
 		};
 
@@ -600,24 +583,10 @@
 			>;
 		};
 
-		pinctrl_i2c3_gpio: i2c3grp_gpio {
-			fsl,pins = <
-				MX7D_PAD_I2C3_SDA__GPIO4_IO13	0x7f
-				MX7D_PAD_I2C3_SCL__GPIO4_IO12	0x7f
-			>;
-		};
-
 		pinctrl_i2c4: i2c4grp {
 			fsl,pins = <
 				MX7D_PAD_I2C4_SDA__I2C4_SDA	0x4000007f
 				MX7D_PAD_I2C4_SCL__I2C4_SCL	0x4000007f
-			>;
-		};
-
-		pinctrl_i2c4_gpio: i2c4grp_gpio {
-			fsl,pins = <
-				MX7D_PAD_I2C4_SDA__GPIO4_IO15	0x7f
-				MX7D_PAD_I2C4_SCL__GPIO4_IO14	0x7f
 			>;
 		};
 
@@ -954,13 +923,11 @@
 	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_wlan>;
 	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_wlan>;
 	pinctrl-3 = <&pinctrl_usdhc2_sleep>, <&pinctrl_wlan_sleep>;
-	enable-sdio-wakeup;
 	keep-power-in-suspend;
 	non-removable;
 	pm-ignore-notify;
-	wifi-host;
 	vmmc-supply = <&wlreg_on>;
-	status = "disabled";
+	status = "okay";
 };
 
 &usdhc3 {
@@ -974,6 +941,6 @@
 };
 
 &snvs_rtc {
-	status = "disabled";
+       status = "okay";
 };
 
