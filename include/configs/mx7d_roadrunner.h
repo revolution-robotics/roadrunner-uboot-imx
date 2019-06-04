@@ -250,9 +250,9 @@
 		"if test $fdt_file = undefined; then " \
 			"if test $som_rev = EMMC; then " \
 				"if test ${use_m4} = yes; then " \
-					"setenv fdt_file imx7d-roadrunner-m4.dtb; " \
+					"setenv fdt_file imx7d-revoedge-m4.dtb; " \
 				"else " \
-					"setenv fdt_file imx7d-roadrunner.dtb; " \
+					"setenv fdt_file imx7d-revoedge.dtb; " \
 				"fi; " \
 			"fi; " \
 			"if test $fdt_file = undefined; then " \
