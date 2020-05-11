@@ -1,0 +1,12 @@
+if TARGET_MX7D_ROADRUNNER
+
+config SYS_BOARD
+	default "mx7d_roadrunner"
+
+config SYS_VENDOR
+	default "revo"
+
+config SYS_CONFIG_NAME
+	default "mx7d_roadrunner"
+
+endif

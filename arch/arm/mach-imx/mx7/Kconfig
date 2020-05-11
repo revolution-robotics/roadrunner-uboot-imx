@@ -77,6 +77,14 @@ config TARGET_MX7D_19X19_LPDDR2_ARM2
 	select DM
 	select DM_THERMAL
 
+config TARGET_MX7D_ROADRUNNER
+	bool "mx7d_roadrunner"
+	select BOARD_LATE_INIT
+	select MX7D
+	select SUPPORT_SPL
+	select DM
+	select DM_THERMAL
+
 config TARGET_PICO_IMX7D
 	bool "pico-imx7d"
 	select BOARD_LATE_INIT
@@ -117,6 +125,7 @@ source "board/freescale/mx7d_12x12_ddr3_arm2/Kconfig"
 source "board/freescale/mx7d_19x19_ddr3_arm2/Kconfig"
 source "board/freescale/mx7d_19x19_lpddr3_arm2/Kconfig"
 source "board/freescale/multa-imx7d/Kconfig"
+source "board/revo/mx7d_roadrunner/Kconfig"
 source "board/technexion/pico-imx7d/Kconfig"
 source "board/toradex/colibri_imx7/Kconfig"
 source "board/variscite/mx7dvar_som/Kconfig"
