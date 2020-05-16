@@ -12,11 +12,6 @@
 #include "imx7d.dtsi"
 #include "imx7d-roadrunner.dtsi"
 
-/ {
-        model = "REVO i.MX7D Industrial Gateway";
-        compatible = "fsl,imx7d-var-som", "fsl,imx7d";
-};
-
 &iomuxc {
         imx7d-sdb {
                 pinctrl_usdhc3: usdhc3grp {
