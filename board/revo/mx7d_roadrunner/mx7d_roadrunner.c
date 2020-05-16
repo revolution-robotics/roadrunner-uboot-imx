@@ -116,6 +116,19 @@ struct i2c_pads_info i2c_pad_info1 = {
 	},
 };
 
+struct i2c_pads_info i2c_pad_info2 = {
+	.scl = {
+		.i2c_mode = MX7D_PAD_I2C2_SCL__I2C2_SCL | PC,
+		.gpio_mode = MX7D_PAD_I2C2_SCL__GPIO4_IO10 | PC,
+		.gp = IMX_GPIO_NR(4, 10),
+	},
+	.sda = {
+		.i2c_mode = MX7D_PAD_I2C2_SDA__I2C2_SDA | PC,
+		.gpio_mode = MX7D_PAD_I2C2_SDA__GPIO4_IO11 | PC,
+		.gp = IMX_GPIO_NR(4, 11),
+	},
+};
+
 /* I2C3 */
 struct i2c_pads_info i2c_pad_info3 = {
 	.scl = {
@@ -678,16 +691,29 @@ int board_early_init_f(void)
 
 #if defined(CONFIG_SYS_I2C_MXC) && !defined(CONFIG_DM_I2C)
 	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
 	setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info3);
 #endif
 
 	return 0;
 }
 
+#define GPIO_EXP_RESET		IMX_GPIO_NR(4, 21)
+
+iomux_v3_cfg_t const gpio_exp_reset_pads[] = {
+	(MX7D_PAD_ECSPI2_MOSI__GPIO4_IO21 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+};
+
 int board_init(void)
 {
 	/* Address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
+
+	/* Configure expansion gpio reset line as high*/
+	imx_iomux_v3_setup_multiple_pads(
+		gpio_exp_reset_pads, ARRAY_SIZE(gpio_exp_reset_pads));
+	gpio_request(GPIO_EXP_RESET, "gpio_exp_reset");
+	gpio_direction_output(GPIO_EXP_RESET, 1);
 
 #ifdef CONFIG_FEC_MXC
 	setup_fec(CONFIG_FEC_ENET_DEV);
