@@ -698,6 +698,20 @@ int board_early_init_f(void)
 	return 0;
 }
 
+#define GPIO_PWR_GREEN_LED	IMX_GPIO_NR(2, 29)
+#define GPIO_PWR_RED_LED	IMX_GPIO_NR(2, 28)
+
+#define GPIO_STATUS_BLUE_LED	IMX_GPIO_NR(3, 20)
+#define GPIO_STATUS_RED_LED	IMX_GPIO_NR(3, 11)
+
+#define GPIO_LINK_BLUE_LED	IMX_GPIO_NR(3, 14)
+#define GPIO_LINK_RED_LED	IMX_GPIO_NR(3, 10)
+
+iomux_v3_cfg_t const gpio_led_pads[] = {
+	(MX7D_PAD_EPDC_BDR0__GPIO2_IO28 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+	(MX7D_PAD_EPDC_BDR1__GPIO2_IO29 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+};
+
 #define GPIO_EXP_RESET		IMX_GPIO_NR(4, 21)
 
 iomux_v3_cfg_t const gpio_exp_reset_pads[] = {
@@ -708,6 +722,14 @@ int board_init(void)
 {
 	/* Address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
+
+	/* Configure status leds */
+	imx_iomux_v3_setup_multiple_pads(
+		gpio_led_pads, ARRAY_SIZE(gpio_led_pads));
+	gpio_request(GPIO_PWR_GREEN_LED, "pwr_green_led");
+	gpio_request(GPIO_PWR_RED_LED, "pwr_red_led");
+	gpio_direction_output(GPIO_PWR_GREEN_LED, 1);
+	gpio_direction_output(GPIO_PWR_RED_LED, 1);
 
 	/* Configure expansion gpio reset line as high*/
 	imx_iomux_v3_setup_multiple_pads(
@@ -897,7 +919,11 @@ void board_fastboot_setup(void)
 #ifdef CONFIG_ANDROID_RECOVERY
 
 /* Use back key for recovery key */
-#define GPIO_BACK_KEY IMX_GPIO_NR(1, 11)
+/*
+ * #define GPIO_BACK_KEY IMX_GPIO_NR(1, 11)
+ */
+#define GPIO_BUTTON IMX_GPIO_NR(3, 19)
+
 iomux_v3_cfg_t const recovery_key_pads[] = {
 	(MX7D_PAD_GPIO1_IO11__GPIO1_IO11 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
@@ -910,10 +936,18 @@ int is_recovery_key_pressing(void)
 	imx_iomux_v3_setup_multiple_pads(recovery_key_pads,
 			ARRAY_SIZE(recovery_key_pads));
 
-	gpio_request(GPIO_BACK_KEY, "back_key");
-	gpio_direction_input(GPIO_BACK_KEY);
+	/*
+	 * gpio_request(GPIO_BACK_KEY, "back_key");
+	 * gpio_direction_input(GPIO_BACK_KEY);
+	 */
+	gpio_request(GPIO_BUTTON, "user_button");
+	gpio_direction_input(GPIO_BUTTON);
 
-	if (gpio_get_value(GPIO_BACK_KEY) == 0) { /* BACK key is low assert */
+	/*
+	 * if (gpio_get_value(GPIO_BACK_KEY) == 0) { /\* BACK key is low assert *\/
+	 */
+	if (gpio_get_value(GPIO_BUTTON) == 0) { /* User button is low assert */
+
 		button_pressed = 1;
 		printf("Recovery key pressed\n");
 	}
