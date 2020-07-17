@@ -80,12 +80,12 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_gpio_keys>;
 
-		// btn0 {
-		//	label = "BTN0";
-		//	gpios = <&gpio3 19 GPIO_ACTIVE_LOW>;
-		//	linux,code = <BTN_0>;
-		//	   wakeup-source;
-		// };
+		btn0 {
+			label = "BTN0";
+			gpios = <&gpio3 19 GPIO_ACTIVE_LOW>;
+			linux,code = <BTN_0>;
+			wakeup-source;
+		};
 
 		// menu {
 		//	   label = "Menu";
