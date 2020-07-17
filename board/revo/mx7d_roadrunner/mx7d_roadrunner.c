@@ -712,11 +712,36 @@ iomux_v3_cfg_t const gpio_led_pads[] = {
 	(MX7D_PAD_EPDC_BDR1__GPIO2_IO29 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
 
+#define GPIO_BUTTON		IMX_GPIO_NR(3, 19)
+
+iomux_v3_cfg_t const reset_key_pads[] = {
+	(MX7D_PAD_LCD_DATA14__GPIO3_IO19 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+};
+
 #define GPIO_EXP_RESET		IMX_GPIO_NR(4, 21)
 
 iomux_v3_cfg_t const gpio_exp_reset_pads[] = {
 	(MX7D_PAD_ECSPI2_MOSI__GPIO4_IO21 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
+
+int is_reset_button_pressed(void)
+{
+	int button_pressed = 0;
+
+	/* Check if reset button pressed */
+	imx_iomux_v3_setup_multiple_pads(reset_key_pads,
+			ARRAY_SIZE(reset_key_pads));
+	gpio_request(GPIO_BUTTON, "user_button");
+	gpio_direction_input(GPIO_BUTTON);
+
+	if (gpio_get_value(GPIO_BUTTON) == 0) { /* User button is low assert */
+
+		button_pressed = 1;
+		printf("Reset pressed\n");
+	}
+
+	return button_pressed;
+}
 
 int board_init(void)
 {
@@ -730,6 +755,12 @@ int board_init(void)
 	gpio_request(GPIO_PWR_RED_LED, "pwr_red_led");
 	gpio_direction_output(GPIO_PWR_GREEN_LED, 1);
 	gpio_direction_output(GPIO_PWR_RED_LED, 1);
+
+	/* Configure reset button */
+	imx_iomux_v3_setup_multiple_pads(
+		reset_key_pads, ARRAY_SIZE(reset_key_pads));
+	gpio_request(GPIO_BUTTON, "user_button");
+	gpio_direction_input(GPIO_BUTTON);
 
 	/* Configure expansion gpio reset line as high*/
 	imx_iomux_v3_setup_multiple_pads(
@@ -925,7 +956,7 @@ void board_fastboot_setup(void)
 #define GPIO_BUTTON IMX_GPIO_NR(3, 19)
 
 iomux_v3_cfg_t const recovery_key_pads[] = {
-	(MX7D_PAD_GPIO1_IO11__GPIO1_IO11 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+	(MX7D_PAD_LCD_DATA14__GPIO3_IO19 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
 
 int is_recovery_key_pressing(void)
