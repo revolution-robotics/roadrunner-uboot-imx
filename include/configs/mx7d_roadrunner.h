@@ -3,9 +3,10 @@
  * Copyright (C) 2016-2019 Variscite Ltd.
  * Copyright (C) 2020 Revolution Robotics, Inc.
  *
+ * Author: Eran Matityahu <eran.m@variscite.com>
  * Author: Andrew L. Moore <andy@revolution-robotics.com>
  *
- * Configuration settings for the Revo i.MX7D RoadRunner-MX7 board family.
+ * Configuration settings for the REVO i.MX7D RoadRunner board family.
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
@@ -73,7 +74,7 @@
 
 /* SPLASH SCREEN Configs  */
 #ifdef CONFIG_SPLASH_SCREEN
-/* Framebuffer and LCD	*/
+/* Framebuffer and LCD  */
 #define CONFIG_CMD_BMP
 #define CONFIG_SPLASH_SCREEN_ALIGN
 #define CONFIG_SPLASH_SOURCE
@@ -87,6 +88,7 @@
 #ifndef CONFIG_DM_I2C
 #define CONFIG_SYS_I2C
 #define CONFIG_SYS_I2C_MXC_I2C1		/* enable I2C bus 1 */
+#define CONFIG_SYS_I2C_MXC_I2C2		/* enable I2C bus 2 */
 #define CONFIG_SYS_I2C_MXC_I2C3		/* enable I2C bus 3 */
 #endif
 #define CONFIG_SYS_I2C_MXC
@@ -179,9 +181,9 @@
 
 
 #ifdef CONFIG_NAND_BOOT
-#define BOOT_ENV_SETTINGS	NAND_BOOT_ENV_SETTINGS
+#define BOOT_ENV_SETTINGS       NAND_BOOT_ENV_SETTINGS
 #else
-#define BOOT_ENV_SETTINGS	MMC_BOOT_ENV_SETTINGS
+#define BOOT_ENV_SETTINGS       MMC_BOOT_ENV_SETTINGS
 #define CONFIG_BOOTCOMMAND \
 	"mmc dev ${mmcdev};" \
 	"if test ${use_m4} = yes; then run m4boot; fi; " \
@@ -318,10 +320,10 @@
 
 /*
  * Partitions layout for NAND is:
- *     mtd0: 2M	      (spl)
- *     mtd1: 2M	      (u-boot)
- *     mtd2: 2M	      (u-boot environment)
- *     mtd3: 8M	      (kernel)
+ *     mtd0: 2M       (spl)
+ *     mtd1: 2M       (u-boot)
+ *     mtd2: 2M       (u-boot environment)
+ *     mtd3: 8M       (kernel)
  *     mtd4: left     (rootfs)
  */
 /* Default mtd partition table */
@@ -330,7 +332,7 @@
 					"2m(u-boot),"\
 					"2m(u-boot_env),"\
 					"8m(kernel),"\
-					"-(rootfs)"	/* ubifs */
+					"-(rootfs)"     /* ubifs */
 
 /* UBI/UBIFS support */
 #define CONFIG_UBI_SILENCE_MSG
