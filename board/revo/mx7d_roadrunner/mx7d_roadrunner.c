@@ -3,6 +3,7 @@
  * Copyright (C) 2016-2019 Variscite Ltd.
  * Copyright (C) 2020 Revolution Robotics, Inc.
  *
+ * Author: Eran Matityahu <eran.m@variscite.com>
  * Author: Andrew L. Moore <andy@revolution-robotics.com>
  *
  * SPDX-License-Identifier:	GPL-2.0+
@@ -64,13 +65,13 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define ENET_RX_PAD_CTRL  (PAD_CTL_PUS_PU100KOHM | PAD_CTL_DSE_3P3V_49OHM)
 
-#define I2C_PAD_CTRL	(PAD_CTL_DSE_3P3V_32OHM | PAD_CTL_SRE_SLOW | \
+#define I2C_PAD_CTRL    (PAD_CTL_DSE_3P3V_32OHM | PAD_CTL_SRE_SLOW | \
 	PAD_CTL_HYS | PAD_CTL_PUE | PAD_CTL_PUS_PU100KOHM)
 
-#define LCD_PAD_CTRL	(PAD_CTL_HYS | PAD_CTL_PUS_PU100KOHM | \
+#define LCD_PAD_CTRL    (PAD_CTL_HYS | PAD_CTL_PUS_PU100KOHM | \
 	PAD_CTL_DSE_3P3V_98OHM)
 
-#define BUTTON_PAD_CTRL	   (PAD_CTL_PUS_PU5KOHM | PAD_CTL_DSE_3P3V_98OHM)
+#define BUTTON_PAD_CTRL    (PAD_CTL_PUS_PU5KOHM | PAD_CTL_DSE_3P3V_98OHM)
 
 #define NAND_PAD_CTRL (PAD_CTL_DSE_3P3V_49OHM | PAD_CTL_SRE_SLOW | PAD_CTL_HYS)
 
@@ -116,6 +117,7 @@ struct i2c_pads_info i2c_pad_info1 = {
 	},
 };
 
+/* I2C2 */
 struct i2c_pads_info i2c_pad_info2 = {
 	.scl = {
 		.i2c_mode = MX7D_PAD_I2C2_SCL__I2C2_SCL | PC,
@@ -731,10 +733,10 @@ int is_reset_button_pressed(void)
 	/* Check if reset button pressed */
 	imx_iomux_v3_setup_multiple_pads(reset_key_pads,
 			ARRAY_SIZE(reset_key_pads));
-	gpio_request(GPIO_BUTTON, "user_button");
+	gpio_request(GPIO_BUTTON, "reset_button");
 	gpio_direction_input(GPIO_BUTTON);
 
-	if (gpio_get_value(GPIO_BUTTON) == 0) { /* User button is low assert */
+	if (gpio_get_value(GPIO_BUTTON) == 0) { /* Reset button is low assert */
 
 		button_pressed = 1;
 		printf("Reset pressed\n");
@@ -759,7 +761,7 @@ int board_init(void)
 	/* Configure reset button */
 	imx_iomux_v3_setup_multiple_pads(
 		reset_key_pads, ARRAY_SIZE(reset_key_pads));
-	gpio_request(GPIO_BUTTON, "user_button");
+	gpio_request(GPIO_BUTTON, "reset_button");
 	gpio_direction_input(GPIO_BUTTON);
 
 	/* Configure expansion gpio reset line as high*/
@@ -950,13 +952,9 @@ void board_fastboot_setup(void)
 #ifdef CONFIG_ANDROID_RECOVERY
 
 /* Use back key for recovery key */
-/*
- * #define GPIO_BACK_KEY IMX_GPIO_NR(1, 11)
- */
-#define GPIO_BUTTON IMX_GPIO_NR(3, 19)
-
+#define GPIO_BACK_KEY IMX_GPIO_NR(1, 11)
 iomux_v3_cfg_t const recovery_key_pads[] = {
-	(MX7D_PAD_LCD_DATA14__GPIO3_IO19 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+	(MX7D_PAD_GPIO1_IO11__GPIO1_IO11 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
 
 int is_recovery_key_pressing(void)
@@ -967,18 +965,10 @@ int is_recovery_key_pressing(void)
 	imx_iomux_v3_setup_multiple_pads(recovery_key_pads,
 			ARRAY_SIZE(recovery_key_pads));
 
-	/*
-	 * gpio_request(GPIO_BACK_KEY, "back_key");
-	 * gpio_direction_input(GPIO_BACK_KEY);
-	 */
-	gpio_request(GPIO_BUTTON, "user_button");
-	gpio_direction_input(GPIO_BUTTON);
+	gpio_request(GPIO_BACK_KEY, "back_key");
+	gpio_direction_input(GPIO_BACK_KEY);
 
-	/*
-	 * if (gpio_get_value(GPIO_BACK_KEY) == 0) { /\* BACK key is low assert *\/
-	 */
-	if (gpio_get_value(GPIO_BUTTON) == 0) { /* User button is low assert */
-
+	if (gpio_get_value(GPIO_BACK_KEY) == 0) { /* BACK key is low assert */
 		button_pressed = 1;
 		printf("Recovery key pressed\n");
 	}
