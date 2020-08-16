@@ -108,76 +108,76 @@
 #ifdef CONFIG_IMX_BOOTAUX
 #ifdef CONFIG_NAND_BOOT
 #define M4_ENV_SETTINGS \
-	"loadm4image=nand read ${m4bootdata} 0x200000 0x8000\0"
+        "loadm4image=nand read ${m4bootdata} 0x200000 0x8000\0"
 #else
 #define M4_ENV_SETTINGS \
-	"m4image=m4_qspi.bin\0" \
-	"loadm4image=load mmc ${mmcdev}:${mmcbootpart} ${m4bootdata} ${bootdir}/${m4image}\0"
+        "m4image=m4_qspi.bin\0" \
+        "loadm4image=load mmc ${mmcdev}:${mmcbootpart} ${m4bootdata} ${bootdir}/${m4image}\0"
 #endif
 #else
 #define M4_ENV_SETTINGS ""
 #endif
 
 #define CONFIG_DFU_ENV_SETTINGS \
-	"dfu_alt_info=image raw 0 0x800000;"\
-		"u-boot raw 0 0x4000;"\
-		"bootimg part 0 1;"\
-		"rootfs part 0 2\0" \
+        "dfu_alt_info=image raw 0 0x800000;"\
+                "u-boot raw 0 0x4000;"\
+                "bootimg part 0 1;"\
+                "rootfs part 0 2\0" \
 
 
 #define MMC_BOOT_ENV_SETTINGS \
-	CONFIG_DFU_ENV_SETTINGS \
-	"bootenv=uEnv.txt\0" \
-	"script=boot.scr\0" \
-	"image=zImage\0" \
-	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
-	"mmcblk=0\0" \
-	"mmcautodetect=yes\0" \
-	"mmcbootpart=1\0" \
-	"mmcrootpart=2\0" \
-	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		"root=/dev/mmcblk${mmcblk}p${mmcrootpart} rootwait rw\0 " \
-	"loadbootenv=" \
-		"load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${bootdir}/${bootenv}\0" \
-	"importbootenv=echo Importing environment from mmc ...; " \
-		"env import -t ${loadaddr} ${filesize}\0" \
-	"loadbootscript=" \
-		"load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${bootdir}/${script};\0" \
-	"bootscript=echo Running bootscript from mmc ...; " \
-		"source\0" \
-	"loadimage=load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${bootdir}/${image}\0" \
-	"loadfdt=run findfdt; " \
-		"echo fdt_file=${fdt_file}; " \
-		"load mmc ${mmcdev}:${mmcbootpart} ${fdt_addr} ${bootdir}/${fdt_file}\0" \
-	"mmcboot=echo Booting from mmc ...; " \
-		"run mmcargs; " \
-		"run optargs; " \
-		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-			"if run loadfdt; then " \
-				"bootz ${loadaddr} - ${fdt_addr}; " \
-			"else " \
-				"if test ${boot_fdt} = try; then " \
-					"bootz; " \
-				"else " \
-					"echo WARN: Cannot load the DT; " \
-				"fi; " \
-			"fi; " \
-		"else " \
-			"bootz; " \
-		"fi;\0"
+        CONFIG_DFU_ENV_SETTINGS \
+        "bootenv=uEnv.txt\0" \
+        "script=boot.scr\0" \
+        "image=uImage\0" \
+        "mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
+        "mmcblk=0\0" \
+        "mmcautodetect=yes\0" \
+        "mmcbootpart=1\0" \
+        "mmcrootpart=2\0" \
+        "mmcargs=setenv bootargs console=${console},${baudrate} " \
+                "root=/dev/mmcblk${mmcblk}p${mmcrootpart} rootwait rw\0 " \
+        "loadbootenv=" \
+                "load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${bootdir}/${bootenv}\0" \
+        "importbootenv=echo Importing environment from mmc ...; " \
+                "env import -t ${loadaddr} ${filesize}\0" \
+        "loadbootscript=" \
+                "load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${bootdir}/${script};\0" \
+        "bootscript=echo Running bootscript from mmc ...; " \
+                "source\0" \
+        "loadimage=load mmc ${mmcdev}:${mmcbootpart} ${loadaddr} ${bootdir}/${image}\0" \
+        "loadfdt=run findfdt; " \
+                "echo fdt_file=${fdt_file}; " \
+                "load mmc ${mmcdev}:${mmcbootpart} ${fdt_addr} ${bootdir}/${fdt_file}\0" \
+        "mmcboot=echo Booting from mmc ...; " \
+                "run mmcargs; " \
+                "run optargs; " \
+                "if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+                        "if run loadfdt; then " \
+                                "bootm ${loadaddr} - ${fdt_addr}; " \
+                        "else " \
+                                "if test ${boot_fdt} = try; then " \
+                                        "bootm; " \
+                                "else " \
+                                        "echo WARN: Cannot load the DT; " \
+                                "fi; " \
+                        "fi; " \
+                "else " \
+                        "bootm; " \
+                "fi;\0"
 
 
 #define NAND_BOOT_ENV_SETTINGS \
-	"nandargs=setenv bootargs console=${console},${baudrate} ubi.mtd=4 " \
-		"root=ubi0:rootfs rootfstype=ubifs rw\0" \
-	"bootcmd=run nandargs; " \
-		"run optargs; " \
-		"if test ${use_m4} = yes; then run m4boot; fi; " \
-		"nand read ${loadaddr} 0x600000 0x7e0000;" \
-		"nand read ${fdt_addr} 0xde0000 0x20000;" \
-		"bootz ${loadaddr} - ${fdt_addr}\0" \
-	"mtdids=" MTDIDS_DEFAULT "\0" \
-	"mtdparts=" MTDPARTS_DEFAULT "\0"
+        "nandargs=setenv bootargs console=${console},${baudrate} ubi.mtd=4 " \
+                "root=ubi0:rootfs rootfstype=ubifs rw\0" \
+        "bootcmd=run nandargs; " \
+                "run optargs; " \
+                "if test ${use_m4} = yes; then run m4boot; fi; " \
+                "nand read ${loadaddr} 0x600000 0x7e0000;" \
+                "nand read ${fdt_addr} 0xde0000 0x20000;" \
+                "bootm ${loadaddr} - ${fdt_addr}\0" \
+        "mtdids=" MTDIDS_DEFAULT "\0" \
+        "mtdparts=" MTDPARTS_DEFAULT "\0"
 
 
 #ifdef CONFIG_NAND_BOOT
@@ -185,95 +185,95 @@
 #else
 #define BOOT_ENV_SETTINGS       MMC_BOOT_ENV_SETTINGS
 #define CONFIG_BOOTCOMMAND \
-	"mmc dev ${mmcdev};" \
-	"if test ${use_m4} = yes; then run m4boot; fi; " \
-	"mmc dev ${mmcdev}; if mmc rescan; then " \
-		"if run loadbootenv; then " \
-			"run importbootenv; " \
-		"fi; " \
-		"if run loadbootscript; then " \
-			"run bootscript; " \
-		"else " \
-			"if run loadimage; then " \
-				"run mmcboot; " \
-			"else " \
-				"run netboot; " \
-			"fi; " \
-		"fi; " \
-	"else run netboot; fi"
+        "mmc dev ${mmcdev};" \
+        "if test ${use_m4} = yes; then run m4boot; fi; " \
+        "mmc dev ${mmcdev}; if mmc rescan; then " \
+                "if run loadbootenv; then " \
+                        "run importbootenv; " \
+                "fi; " \
+                "if run loadbootscript; then " \
+                        "run bootscript; " \
+                "else " \
+                        "if run loadimage; then " \
+                                "run mmcboot; " \
+                        "else " \
+                                "run netboot; " \
+                        "fi; " \
+                "fi; " \
+        "else run netboot; fi"
 #endif
 
 #define OPT_ENV_SETTINGS \
-	"optargs=setenv bootargs ${bootargs} ${kernelargs}\0"
+        "optargs=setenv bootargs ${bootargs} ${kernelargs}\0"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	M4_ENV_SETTINGS \
-	BOOT_ENV_SETTINGS \
-	OPT_ENV_SETTINGS \
-	"console=ttymxc0\0" \
-	"boot_fdt=try\0" \
-	"fdt_high=0xffffffff\0" \
-	"initrd_high=0xffffffff\0" \
-	"fdt_file=undefined\0" \
-	"fdt_addr=0x83000000\0" \
-	"panel=VAR-WVGA-LCD\0" \
-	"splashsourceauto=yes\0" \
-	"splashfile=/boot/splash.bmp\0" \
-	"splashimage=0x83100000\0" \
-	"splashenable=setenv splashfile /boot/splash.bmp; " \
-		"setenv splashimage 0x83100000\0" \
-	"splashdisable=setenv splashfile; setenv splashimage\0" \
-	"ip_dyn=yes\0" \
-	"use_m4=no\0" \
-	"m4bootdata="__stringify(CONFIG_SYS_AUXCORE_BOOTDATA)"\0" \
-	"m4boot=if run loadm4image; then dcache flush; bootaux ${m4bootdata}; fi\0" \
-	"netargs=setenv bootargs console=${console},${baudrate} " \
-		"root=/dev/nfs rw " \
-		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
-	"netboot=echo Booting from net ...; " \
-		"run netargs; " \
-		"run optargs; " \
-		"if test ${ip_dyn} = yes; then " \
-			"setenv get_cmd dhcp; " \
-		"else " \
-			"setenv get_cmd tftp; " \
-		"fi; " \
-		"${get_cmd} ${image}; " \
-		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-			"run findfdt; " \
-			"echo fdt_file=${fdt_file}; " \
-			"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
-				"bootz ${loadaddr} - ${fdt_addr}; " \
-			"else " \
-				"if test ${boot_fdt} = try; then " \
-					"bootz; " \
-				"else " \
-					"echo WARN: Cannot load the DT; " \
-				"fi; " \
-			"fi; " \
-		"else " \
-			"bootz; " \
-		"fi;\0" \
-	"findfdt="\
-		"if test $fdt_file = undefined; then " \
-			"if test $som_rev = EMMC; then " \
-				"if test ${use_m4} = yes; then " \
-					"setenv fdt_file imx7d-roadrunner-emmc-m4.dtb; " \
-				"else " \
-					"setenv fdt_file imx7d-roadrunner-emmc.dtb; " \
-				"fi; " \
-			"fi; " \
-			"if test $som_rev = NAND; then " \
-				"if test ${use_m4} = yes; then " \
-					"setenv fdt_file imx7d-roadrunner-nand-m4.dtb; " \
-				"else " \
-					"setenv fdt_file imx7d-roadrunner-nand.dtb; " \
-				"fi; " \
-			"fi; " \
-			"if test $fdt_file = undefined; then " \
-				"echo WARNING: Could not determine dtb to use; " \
-			"fi; " \
-		"fi;\0"
+        M4_ENV_SETTINGS \
+        BOOT_ENV_SETTINGS \
+        OPT_ENV_SETTINGS \
+        "console=ttymxc0\0" \
+        "boot_fdt=try\0" \
+        "fdt_high=0xffffffff\0" \
+        "initrd_high=0xffffffff\0" \
+        "fdt_file=undefined\0" \
+        "fdt_addr=0x83000000\0" \
+        "panel=VAR-WVGA-LCD\0" \
+        "splashsourceauto=yes\0" \
+        "splashfile=/boot/splash.bmp\0" \
+        "splashimage=0x83100000\0" \
+        "splashenable=setenv splashfile /boot/splash.bmp; " \
+                "setenv splashimage 0x83100000\0" \
+        "splashdisable=setenv splashfile; setenv splashimage\0" \
+        "ip_dyn=yes\0" \
+        "use_m4=no\0" \
+        "m4bootdata="__stringify(CONFIG_SYS_AUXCORE_BOOTDATA)"\0" \
+        "m4boot=if run loadm4image; then dcache flush; bootaux ${m4bootdata}; fi\0" \
+        "netargs=setenv bootargs console=${console},${baudrate} " \
+                "root=/dev/nfs rw " \
+                "ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+        "netboot=echo Booting from net ...; " \
+                "run netargs; " \
+                "run optargs; " \
+                "if test ${ip_dyn} = yes; then " \
+                        "setenv get_cmd dhcp; " \
+                "else " \
+                        "setenv get_cmd tftp; " \
+                "fi; " \
+                "${get_cmd} ${image}; " \
+                "if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+                        "run findfdt; " \
+                        "echo fdt_file=${fdt_file}; " \
+                        "if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
+                                "bootm ${loadaddr} - ${fdt_addr}; " \
+                        "else " \
+                                "if test ${boot_fdt} = try; then " \
+                                        "bootm; " \
+                                "else " \
+                                        "echo WARN: Cannot load the DT; " \
+                                "fi; " \
+                        "fi; " \
+                "else " \
+                        "bootm; " \
+                "fi;\0" \
+        "findfdt="\
+                "if test $fdt_file = undefined; then " \
+                        "if test $som_rev = EMMC; then " \
+                                "if test ${use_m4} = yes; then " \
+                                        "setenv fdt_file imx7d-roadrunner-emmc-m4.dtb; " \
+                                "else " \
+                                        "setenv fdt_file imx7d-roadrunner-emmc.dtb; " \
+                                "fi; " \
+                        "fi; " \
+                        "if test $som_rev = NAND; then " \
+                                "if test ${use_m4} = yes; then " \
+                                        "setenv fdt_file imx7d-roadrunner-nand-m4.dtb; " \
+                                "else " \
+                                        "setenv fdt_file imx7d-roadrunner-nand.dtb; " \
+                                "fi; " \
+                        "fi; " \
+                        "if test $fdt_file = undefined; then " \
+                                "echo WARNING: Could not determine dtb to use; " \
+                        "fi; " \
+                "fi;\0"
 
 #define CONFIG_SYS_MEMTEST_START	0x80000000
 #define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_MEMTEST_START + 0x20000000)
@@ -290,9 +290,9 @@
 #define CONFIG_SYS_INIT_RAM_SIZE	IRAM_SIZE
 
 #define CONFIG_SYS_INIT_SP_OFFSET \
-	(CONFIG_SYS_INIT_RAM_SIZE - GENERATED_GBL_DATA_SIZE)
+        (CONFIG_SYS_INIT_RAM_SIZE - GENERATED_GBL_DATA_SIZE)
 #define CONFIG_SYS_INIT_SP_ADDR \
-	(CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_INIT_SP_OFFSET)
+        (CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_INIT_SP_OFFSET)
 
 /* FLASH and environment organization */
 #ifdef CONFIG_NAND_BOOT
@@ -328,11 +328,11 @@
  */
 /* Default mtd partition table */
 #define MTDPARTS_DEFAULT	"mtdparts=nandflash-0:"\
-					"2m(spl),"\
-					"2m(u-boot),"\
-					"2m(u-boot_env),"\
-					"8m(kernel),"\
-					"-(rootfs)"     /* ubifs */
+                                        "2m(spl),"\
+                                        "2m(u-boot),"\
+                                        "2m(u-boot_env),"\
+                                        "8m(kernel),"\
+                                        "-(rootfs)"     /* ubifs */
 
 /* UBI/UBIFS support */
 #define CONFIG_UBI_SILENCE_MSG
