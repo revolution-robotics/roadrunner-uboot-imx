@@ -257,18 +257,7 @@
         "findfdt="\
                 "if test $fdt_file = undefined; then " \
                         "if test $som_rev = EMMC; then " \
-                                "if test ${use_m4} = yes; then " \
-                                        "setenv fdt_file imx7d-roadrunner-emmc-m4.dtb; " \
-                                "else " \
-                                        "setenv fdt_file imx7d-roadrunner-emmc.dtb; " \
-                                "fi; " \
-                        "fi; " \
-                        "if test $som_rev = NAND; then " \
-                                "if test ${use_m4} = yes; then " \
-                                        "setenv fdt_file imx7d-roadrunner-nand-m4.dtb; " \
-                                "else " \
-                                        "setenv fdt_file imx7d-roadrunner-nand.dtb; " \
-                                "fi; " \
+                                "setenv fdt_file imx7d-roadrunner-mixio.dtb; " \
                         "fi; " \
                         "if test $fdt_file = undefined; then " \
                                 "echo WARNING: Could not determine dtb to use; " \

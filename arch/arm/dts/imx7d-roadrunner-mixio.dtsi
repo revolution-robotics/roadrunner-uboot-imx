@@ -688,10 +688,10 @@
 				MX7D_PAD_UART2_TX_DATA__GPIO4_IO3	0x59  /* ethphy1 reset */
 				MX7D_PAD_GPIO1_IO10__GPIO1_IO10		0x59  /* hsic hub reset */
 				MX7D_PAD_GPIO1_IO12__GPIO1_IO12		0x59  /* hsic hub connect */
-				// MX7D_PAD_SAI2_TX_SYNC__GPIO6_IO19      0x59  /* temp alert */
-				// MX7D_PAD_ECSPI1_MOSI__GPIO4_IO17       0x39  /* gpio expander reset */
-				MX7D_PAD_GPIO1_IO13__GPIO1_IO13		0x59  /* LED */
-				MX7D_PAD_SD1_WP__CCM_CLKO2		0xb0  /* camera clock */
+				// MX7D_PAD_GPIO1_IO13__GPIO1_IO13		0x59  /* LED */
+				// MX7D_PAD_SD1_WP__CCM_CLKO2		0xb0  /* camera clock */
+				MX7D_PAD_SAI2_TX_SYNC__GPIO6_IO19      0x59  /* temp alert */
+				MX7D_PAD_ECSPI1_MOSI__GPIO4_IO17       0x39  /* gpio expander reset */
 			>;
 		};
 
