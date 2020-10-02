@@ -622,11 +622,11 @@
 		};
 	};
 
-	eeprom_i2c: eeprom@50 {
-		compatible = "atmel,24c512";
-		reg = <0x50>;
-		pagesize = <128>;
-	};
+	// eeprom_i2c: eeprom@50 {
+	//	compatible = "atmel,24c512";
+	//	reg = <0x50>;
+	//	pagesize = <128>;
+	// };
 
 	pcf2129t: pcf2127@51 {
 		compatible = "nxp,pcf2127";
