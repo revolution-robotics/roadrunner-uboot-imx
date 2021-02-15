@@ -529,10 +529,10 @@
 		// gpio-base = <224>;
 
 		gpio-line-names =
-		"DIO_IN_1", "DIO_PP_1", "DIO_OUT_1", "DIO_DI_EN_1",
-		"DIO_IN_2", "DIO_PP_2", "DIO_OUT_2", "DIO_DI_EN_2",
-		"DIO_IN_3", "DIO_PP_3", "DIO_OUT_3", "DIO_DI_EN_3",
-		"DIO_IN_4", "DIO_PP_4", "DIO_OUT_4", "DIO_DI_EN_4";
+		"DIO_IN_1",    "DIO_PP_1",  "DIO_OUT_1", "DIO_DI_EN_1",
+		"DIO_IN_2",    "DIO_PP_2",  "DIO_OUT_2", "DIO_DI_EN_2",
+		"DIO_DI_EN_4", "DIO_OUT_4", "DIO_PP_4",  "DIO_IN_4",
+		"DIO_DI_EN_3", "DIO_OUT_3", "DIO_PP_3",  "DIO_IN_3";
 	};
 
 	iio_gpio1: mcp23017_2@21 {
@@ -553,10 +553,10 @@
 		// gpio-base = <240>;
 
 		gpio-line-names =
-		"DIO_IN_5", "DIO_PP_5", "DIO_OUT_5", "DIO_DI_EN_5",
-		"DIO_IN_6", "DIO_PP_6", "DIO_OUT_6", "DIO_DI_EN_6",
-		"DIO_IN_7", "DIO_PP_7", "DIO_OUT_7", "DIO_DI_EN_7",
-		"DIO_IN_8", "DIO_PP_8", "DIO_OUT_8", "DIO_DI_EN_8";
+		"DIO_IN_5",    "DIO_PP_5",  "DIO_OUT_5", "DIO_DI_EN_5",
+		"DIO_IN_6",    "DIO_PP_6",  "DIO_OUT_6", "DIO_DI_EN_6",
+		"DIO_DI_EN_8", "DIO_OUT_8", "DIO_PP_8",  "DIO_IN_8",
+		"DIO_DI_EN_7", "DIO_OUT_7", "DIO_PP_7",  "DIO_IN_7";
 	};
 
 	iio_gpio2: mcp23017_3@22 {
@@ -569,7 +569,8 @@
 		pinctrl-0 = <&pinctrl_gpio_expand_3>;
 
 		interrupt-parent = <&gpio3>;
-		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+		// interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 		interrupt-controller;
 		#interrupt-cells=<2>;
 		microchip,irq-mirror;
@@ -577,10 +578,34 @@
 		// gpio-base = <256>;
 
 		gpio-line-names =
-		"DIO_IN_9", "DIO_PP_9", "DIO_OUT_9", "DIO_DI_EN_9",
-		"DIO_IN_10", "DIO_PP_10", "DIO_OUT_10", "DIO_DI_EN_10",
-		"DIO_IN_11", "DIO_PP_11", "DIO_OUT_11", "DIO_DI_EN_11",
-		"DIO_IN_12", "DIO_PP_12", "DIO_OUT_12", "DIO_DI_EN_12";
+		"DIO_IN_9",     "DIO_PP_9",   "DIO_OUT_9",  "DIO_DI_EN_9",
+		"DIO_IN_10",    "DIO_PP_10",  "DIO_OUT_10", "DIO_DI_EN_10",
+		"DIO_DI_EN_12", "DIO_OUT_12", "DIO_PP_12",  "DIO_IN_12",
+		"DIO_DI_EN_11", "DIO_OUT_11", "DIO_PP_11",  "DIO_IN_11";
+	};
+
+	iio_gpio3: mcp23017_4@23 {
+		compatible = "microchip,mcp23017";
+		gpio-controller;
+		#gpio-cells = <2>;
+		reg = <0x23>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_expand_4>;
+
+		interrupt-parent = <&gpio3>;
+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+		interrupt-controller;
+		#interrupt-cells=<2>;
+		microchip,irq-mirror;
+
+		// gpio-base = <272>;
+
+		gpio-line-names =
+		"DIO_IN_13",     "DIO_PP_13",  "DIO_OUT_13", "DIO_DI_EN_13",
+		"DIO_IN_14",     "DIO_PP_14",  "DIO_OUT_14", "DIO_DI_EN_14",
+		"DIO_DI_EN_16",  "DIO_OUT_16", "DIO_PP_16",  "DIO_IN_16",
+		"DIO_DI_EN_15",  "DIO_OUT_15", "DIO_PP_15",  "DIO_IN_15";
 	};
 
 	temp_exp: lm75_exp@48 {
@@ -588,39 +613,39 @@
 		reg = <0x48>;
 	};
 
-	ads1115: ads1115@49 {
-		compatible = "ti,ads1115";
-		reg = <0x49>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_ads1115_irq>;
-
-		channel@4 {
-			reg = <4>;
-			ti,gain = <0>;
-			ti,datarate = <0>;
-		};
-
-		channel@5 {
-			reg = <5>;
-			ti,gain = <0>;
-			ti,datarate = <0>;
-		};
-
-		channel@6 {
-			reg = <6>;
-			ti,gain = <0>;
-			ti,datarate = <0>;
-		};
-
-		channel@7 {
-			reg = <7>;
-			ti,gain = <0>;
-			ti,datarate = <0>;
-		};
-	};
+	// ads1115: ads1115@49 {
+	//	compatible = "ti,ads1115";
+	//	reg = <0x49>;
+	//	#address-cells = <1>;
+	//	#size-cells = <0>;
+	//
+	//	pinctrl-names = "default";
+	//	pinctrl-0 = <&pinctrl_ads1115_irq>;
+	//
+	//	channel@4 {
+	//		reg = <4>;
+	//		ti,gain = <0>;
+	//		ti,datarate = <0>;
+	//	};
+	//
+	//	channel@5 {
+	//		reg = <5>;
+	//		ti,gain = <0>;
+	//		ti,datarate = <0>;
+	//	};
+	//
+	//	channel@6 {
+	//		reg = <6>;
+	//		ti,gain = <0>;
+	//		ti,datarate = <0>;
+	//	};
+	//
+	//	channel@7 {
+	//		reg = <7>;
+	//		ti,gain = <0>;
+	//		ti,datarate = <0>;
+	//	};
+	// };
 
 	// eeprom_i2c: eeprom@50 {
 	//	compatible = "atmel,24c512";
@@ -700,11 +725,11 @@
 			>;
 		};
 
-		pinctrl_ads1115_irq: ads1115_irqgrp {
-			fsl,pins = <
-				MX7D_PAD_ECSPI2_MISO__GPIO4_IO22	0x2
-			>;
-		};
+		// pinctrl_ads1115_irq: ads1115_irqgrp {
+		//	fsl,pins = <
+		//		MX7D_PAD_ECSPI2_MISO__GPIO4_IO22	0x2
+		//	>;
+		// };
 
 		pinctrl_gpio_expand_1: gpio_expandgrp-1 {
 			fsl,pins = <
@@ -719,6 +744,12 @@
 		};
 
 		pinctrl_gpio_expand_3: gpio_expandgrp-3 {
+			fsl,pins = <
+				MX7D_PAD_LCD_VSYNC__GPIO3_IO3		0x2
+			>;
+		};
+
+		pinctrl_gpio_expand_4: gpio_expandgrp-4 {
 			fsl,pins = <
 				MX7D_PAD_LCD_HSYNC__GPIO3_IO2		0x2
 			>;
@@ -925,13 +956,13 @@
 			>;
 		};
 
-		pinctrl_uart2_rs485: uart2grp_rs485 {
-			fsl,pins = <
-				MX7D_PAD_LCD_ENABLE__UART2_DCE_TX	0x79
-				MX7D_PAD_LCD_CLK__UART2_DCE_RX		0x79
-				MX7D_PAD_LCD_VSYNC__GPIO3_IO3	0x79
-			>;
-		};
+		// pinctrl_uart2_rs485: uart2grp_rs485 {
+		//	fsl,pins = <
+		//		MX7D_PAD_LCD_ENABLE__UART2_DCE_TX	0x79
+		//		MX7D_PAD_LCD_CLK__UART2_DCE_RX		0x79
+		//		MX7D_PAD_LCD_VSYNC__GPIO3_IO3	0x79
+		//	>;
+		// };
 
 		pinctrl_uart3: uart3grp {
 			fsl,pins = <
@@ -1170,13 +1201,14 @@
 &uart2 {
 	pinctrl-names = "default";
 	// pinctrl-0 = <&pinctrl_uart2>;
-	pinctrl-0 = <&pinctrl_uart2_rs485>;
+	// pinctrl-0 = <&pinctrl_uart2_rs485>;
+	pinctrl-0 = <&pinctrl_uart2_nofc>;
 	assigned-clocks = <&clks IMX7D_UART2_ROOT_SRC>;
 	assigned-clock-parents = <&clks IMX7D_OSC_24M_CLK>;
-	uart-has-rtscts;
-	rts-gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
-	linux,rs485-enabled-at-boot-time;
-	rs485-rts-delay = <0 200>;		// in milliseconds
+	// uart-has-rtscts;
+	// rts-gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
+	// linux,rs485-enabled-at-boot-time;
+	// rs485-rts-delay = <0 200>;		// in milliseconds
 	status = "okay";
 };
 
