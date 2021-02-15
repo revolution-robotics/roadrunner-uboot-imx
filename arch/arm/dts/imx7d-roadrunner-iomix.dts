@@ -10,7 +10,7 @@
 /dts-v1/;
 
 #include "imx7d.dtsi"
-#include "imx7d-roadrunner-dio.dtsi"
+#include "imx7d-roadrunner-iomix.dtsi"
 
 &iomuxc {
 	imx7d-sdb {
