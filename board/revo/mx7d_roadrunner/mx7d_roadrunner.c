@@ -720,6 +720,13 @@ iomux_v3_cfg_t const reset_key_pads[] = {
 	(MX7D_PAD_LCD_DATA14__GPIO3_IO19 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
 };
 
+
+#define GPIO_MANAGE_SOM		IMX_GPIO_NR(2, 3)
+
+iomux_v3_cfg_t const manage_som_pads[] = {
+	(MX7D_PAD_EPDC_DATA03__GPIO2_IO3 | MUX_PAD_CTRL(BUTTON_PAD_CTRL)),
+};
+
 #define GPIO_EXP_RESET		IMX_GPIO_NR(4, 21)
 
 iomux_v3_cfg_t const gpio_exp_reset_pads[] = {
@@ -745,6 +752,25 @@ int is_reset_button_pressed(void)
 	return button_pressed;
 }
 
+int is_manage_som_asserted(void)
+{
+	int manage_som_asserted = 0;
+
+	/* Check if reset button pressed */
+	imx_iomux_v3_setup_multiple_pads(manage_som_pads,
+			ARRAY_SIZE(manage_som_pads));
+	gpio_request(GPIO_MANAGE_SOM, "MANAGE_SOM");
+	gpio_direction_input(GPIO_MANAGE_SOM);
+
+	if (gpio_get_value(GPIO_MANAGE_SOM) == 0) { /* MANAGE_SOM is low assert */
+
+		manage_som_asserted = 1;
+		printf("MANAGE_SOM asserted\n");
+	}
+
+	return manage_som_asserted;
+}
+
 int board_init(void)
 {
 	/* Address of boot parameters */
@@ -763,6 +789,12 @@ int board_init(void)
 		reset_key_pads, ARRAY_SIZE(reset_key_pads));
 	gpio_request(GPIO_BUTTON, "reset_button");
 	gpio_direction_input(GPIO_BUTTON);
+
+	/* Configure MANAGE_SOM GPIO */
+	imx_iomux_v3_setup_multiple_pads(
+		manage_som_pads, ARRAY_SIZE(manage_som_pads));
+	gpio_request(GPIO_MANAGE_SOM, "MANAGE_SOM");
+	gpio_direction_input(GPIO_MANAGEP_SOM);
 
 	/* Configure expansion gpio reset line as high*/
 	imx_iomux_v3_setup_multiple_pads(
