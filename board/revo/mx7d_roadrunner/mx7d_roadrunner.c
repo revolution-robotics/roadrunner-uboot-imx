@@ -794,7 +794,7 @@ int board_init(void)
 	imx_iomux_v3_setup_multiple_pads(
 		manage_som_pads, ARRAY_SIZE(manage_som_pads));
 	gpio_request(GPIO_MANAGE_SOM, "MANAGE_SOM");
-	gpio_direction_input(GPIO_MANAGEP_SOM);
+	gpio_direction_input(GPIO_MANAGE_SOM);
 
 	/* Configure expansion gpio reset line as high*/
 	imx_iomux_v3_setup_multiple_pads(
