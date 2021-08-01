@@ -756,7 +756,7 @@ int is_manage_som_asserted(void)
 {
 	int manage_som_asserted = 0;
 
-	/* Check if reset button pressed */
+	/* Check if MANAGE_SOM pin asserted. */
 	imx_iomux_v3_setup_multiple_pads(manage_som_pads,
 			ARRAY_SIZE(manage_som_pads));
 	gpio_request(GPIO_MANAGE_SOM, "MANAGE_SOM");
