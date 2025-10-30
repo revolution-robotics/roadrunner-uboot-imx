@@ -820,6 +820,8 @@ ifneq ($(CONFIG_SYS_INIT_SP_BSS_OFFSET),)
 ALL-y += init_sp_bss_offset_check
 endif
 
+# U-Boot LOAD segment should be RWE, so silence warning.
+LDFLAGS_u-boot += --no-warn-rwx-segments
 LDFLAGS_u-boot += $(LDFLAGS_FINAL)
 
 # Avoid 'Not enough room for program headers' error on binutils 2.28 onwards.
